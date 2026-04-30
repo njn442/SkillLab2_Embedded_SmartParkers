@@ -63,20 +63,18 @@ By the final review, this README should clearly show:
 
 | Name                  | Primary Role                    | Secondary Role   | Strengths Brought to the Project |
 | --------------        | ------------------------------- | --------------   | -------------------------------- |
-| `Mrugendra Vasmatkar` | `[Electronics / Coding / App ]` | `Documentation`  | `Documentation, Gift of Gab `|
-| `Jyoti Bagate`        | `[Electronics / Fabrication]`   | `[Coding]`       | `Material Handling, Hardware`    |
+| `Neev Jain `          | `Software(Flask/App)`           | `UI Design`      |  `Coding ,Logic Building `       |
+| `Hitesh Gughe`        | `Hardware (sensors)`            | `Circuit Setup`  | `Electronics , Wiring`           |
+| `Bharati Bhatia`      | `Software(Backend/UI)`          | `Testing`        | ` Problem Solving , UI`          |
+| `Sanika Shahasane`    | `Hardware (Integration)`        | `Documentation`  | `Hardware Integration`           |
 
 ## 1.3 Project Title
 
-`"Project Project"`
-
-`(because Project-or)`
-
-<img width="1600" height="1131" alt="image" src="https://github.com/user-attachments/assets/c64bfbd4-b3b7-43d9-83ad-c203a5aa11bc" />
+`Smart Parking System using Raspberry Pi and IR Sensors`
 
 ## 1.4 One-Line Pitch
 
-`A projected, fully customizable time portal where engineering education is done through PUBG battlefield in the comfort of our home`
+`A smart parking system that detects slot availability using sensors and allows users to book parking slots through a web interface.`
 
 ## 1.5 Expanded Project Idea
 
@@ -87,7 +85,8 @@ In 1–2 paragraphs, explain:
 - what technologies are involved.
 
 **Response:**  
-`A projected and fully customizable time portal can transform engineering education into an immersive PUBG-style battlefield experience from the comfort of home. In this environment, students can learn engineering concepts by entering a virtual battlefield where challenges, obstacles, and missions are designed around real technical problems. Instead of passively studying theory, learners actively apply concepts such as electronics, coding, sensors, robotics, mechanics, and system design to complete missions, solve problems, and progress through different levels. This approach makes engineering education more interactive, engaging, and practical by combining gaming, simulation, and hands-on problem-solving in a familiar and exciting format.`
+`Our project is a Smart Parking System that combines both hardware and software. IR sensors are used to detect whether a parking slot is occupied or free. These sensors are connected to a Raspberry Pi, which reads the sensor data using GPIO pins.The Raspberry Pi sends this data to a Flask-based web application. Users can log in, view available slots, and book parking. The system updates slot availability dynamically based on sensor input.
+This integration of hardware and software makes the system practical and suitable for real-world parking management.`
 
 ---
 
@@ -97,18 +96,17 @@ In 1–2 paragraphs, explain:
 
 List what inspired the project.
 
-| Source Type | Title / Link                                                        | What Inspired You                                                                         |
-| ----------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `[Video]`   | `https://www.instagram.com/reel/DW4CT7WCDry/?igsh=cXg3dzAxYmdncDBo` | `How projection mapping can be used to create interactive digital + physical experiences` |
-|             |                                                                     |                                                                                           |
-|             |                                                                     |                                                                                           |
+| Source Type | Title / Link                            | What Inspired You                                       |                                                | Web         | Smart Parking System (YouTube / Google) | Concept of using sensors to detect parking availability |
+| Website     | https://www.raspberrypi.com             | Use of Raspberry Pi for hardware control                |
+| Concept     | IoT Parking Systems                     | Integration of sensors with web application             |
 
 ## 2.2 Original Twist
 
 What makes your project original?
 
 **Response:**  
-
+`Our project is not just a basic parking system. We combined hardware (IR sensors and Raspberry Pi) with a web-based booking system.
+The originality lies in integrating real-time sensor data with a user-friendly web interface. Users can not only view slot availability but also book parking slots online, see pricing, and manage bookings.This makes the system more practical and interactive compared to traditional parking systems which only display availability`
 
 ---
 
@@ -118,17 +116,17 @@ What makes your project original?
 
 Describe exactly how a user will use the project.Make it a story
 **Response:**  
-
+`A user first signs up and logs into the system through the web application. After logging in, the user sees the dashboard displaying available parking slots.
+The slot availability is updated based on IR sensor readings connected to the Raspberry Pi. If a vehicle is present, the sensor detects it and marks the slot as occupied.The user selects a vehicle type, enters vehicle details, and books a parking slot. The system calculates the cost and confirms the booking.
+If all slots are occupied, the system displays "Parking Full" and disables booking.`
                                                   |
-
-
 
 ---
 
 # 4. Definition of Success
 
 ## 4.1 Definition of “Usable”
-
+`A system is considered usable when both hardware and software components work correctly together.The user should be able to easily sign up, log in, view available slots, and book a parking slot without confusion. At the same time, the IR sensors should correctly detect whether a slot is occupied or free, and the Raspberry Pi should update the system accordingly.The interface should be simple, and the system should respond accurately in real-time.`
 
 
 ## 4.2 Minimum Usable Version
@@ -136,12 +134,17 @@ Describe exactly how a user will use the project.Make it a story
 What is the smallest version of this project that still delivers the core experience?
 
 **Response:**  
-
+`The minimum usable version includes a working web application where users can log in and book parking slots, along with at least one IR sensor connected to the Raspberry Pi.The sensor should detect slot occupancy and update the system accordingly. Even with one sensor, the system should demonstrate real-time detection and booking functionality.`
 
 ## 4.3 Stretch Features
 
 What features are nice to have but not essential?
 
+`- Multiple IR sensors for detecting multiple parking slots
+- Real-time slot updates using Raspberry Pi GPIO
+- Visual slot representation on dashboard
+- Booking history and cancellation feature
+- Integration with mobile notifications (future scope) `
 
 ---
 
@@ -187,12 +190,28 @@ Include:
 - physical structure,
 - app interaction if any.
 
-**Response:**  
+**Response:**
+`The system consists of both hardware and software components.
+Input:
+IR sensors are used as input devices. They detect whether a parking slot is occupied or free based on object detection.
+Processing:
+The IR sensors are connected to a Raspberry Pi. The Raspberry Pi reads sensor data through GPIO pins and processes whether the slot is available or not.
+Output:
+The processed data is sent to a Flask-based web application. The website displays available slots, booking status, and pricing.
+Physical Structure:
+Each parking slot has an IR sensor installed. All sensors are connected to the Raspberry Pi, which acts as the central controller.
+App Interaction:
+Users interact with the system through a web interface. They can log in, check availability, and book parking slots. The system updates slot availability dynamically. `
 
 ## 5.3 Input / Output Map
 
-| System Part                              | Type            | What It Does                                                               |
-
+| System Part      | Type       | What It Does                                  |
+| IR Sensor        | Input      | Detects vehicle presence                      |
+| Raspberry Pi     | Processing | Reads sensor data and processes slot status   |
+| GPIO Pins        | Interface  | Connect sensors to Raspberry Pi               |
+| Flask App        | Processing | Handles user interaction and booking          |
+| SQLite Database  | Storage    | Stores user and booking data                  |
+| Web Dashboard    | Output     | Displays available slots and booking info     |
 
 ---
 
