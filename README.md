@@ -1,4 +1,4 @@
-# SKILL LAB PRATICAL HACKATHON
+<img width="1102" height="316" alt="image" src="https://github.com/user-attachments/assets/f6c8baaa-395f-4149-8029-018a123e5931" /># SKILL LAB PRATICAL HACKATHON
 
 ## Final Project README
 
@@ -318,6 +318,7 @@ Insert a hand-drawn or software-made circuit diagram.
 | `[Raspberry Pi Terminal]`      | `Control RaspberryPi`                          |
 | `[Python/OpenCV]`              | `Vehicle Type Detection` |
 | `[Flask]` | `[Backend/API]`                      |
+| `[Cursor AI]`| `Code generation`|
 
 
 ## 8.2 Software Logic/Algorithm
@@ -434,18 +435,20 @@ Explain why you selected your main materials and components.
 | -------------------- | ------------------------ | ------------- | --------------------------- | ------------ |
 | `I2C LCD`            | `Display`                |               |                             | `[Received]` |
 | `IR Sensors`         | `Sensor devices`         |               |         | `[Received]` |
-| `Li-ion Batteries`   | `Portable power`         | `local store` | `before testing`            | `Recieved`   |
+| `Touch Sensor`   | `Automated barricade`         |  |            | `Recieved`   |
+|`Buzzer`| `Intrusion detecction`|||
+|`LEDs`| `Slots booking confirmation`|||
 
 ## 9.4 Budget Summary
 
 | Budget Item           | Estimated Cost              |
 | --------------------- | ---------------------------:|
-| Electronics           | `[400]`                     |
-| Mechanical parts      | `[200]`                     |
+| Electronics           | `[4097]`                     |
+| Mechanical parts      | `[0]`                        |
 | Fabrication materials | `[0 (Available on campus)]` |
 | Purchased extras      | `[0]`                       |
-| Contingency           | `[300]`                     |
-| **Total**             | `[900]`                     |
+| Contingency           | `[0]`                     |
+| **Total**             | `[4097]`                     |
 
 ## 9.5 Budget Reflection
 
@@ -476,7 +479,7 @@ Include:
 
 | Task ID | Task                    | Owner    | Estimated Hours | Deadline     | Dependency | Status |
 | ------- | ----------------------- | -------- | ---------------:| ------------ | ---------- | ------ |
-| T1      | `[Finalize concept]`    | `[Both]` | `2`             | `1st April`  | `None`     | `Done` |
+| T1      | `[Topic Selection]`    | `[Both]` | `2`             | `1st April`  | `None`     | `Done` |
 
 
 ## 10.3 Responsibility Split
@@ -502,21 +505,15 @@ Expected outcomes:
 
 - [x] Idea finalized
 - [x] Core interaction decided
-- [x] Sketches made
-- [x] BOM completed
-- [x] Purchase needs identified
-- [ ] Key uncertainty identified
-- [x] Basic feasibility tested
+
 
 ### Bi Hour 2 — Build Subsystems
 
 Expected outcomes:
 
 - [x] Electronics tests completed
-- [ ] CAD / structure planning completed
-- [ ] App UI started if needed
-- [x] Mechanical concept tested
-- [x] Main subsystems partially working
+
+- [x] Website generated
 
 ### Bi Hour 3 — Integrate
 
@@ -524,9 +521,9 @@ Expected outcomes:
 
 - [x] Physical body built
 - [x] Electronics integrated
-- [x] Code connected to hardware
-- [ ] App connected if required
-- [x] First playable version exists
+
+- [x] Done some corrections to the website
+- [x] First version exists
 
 ### Bi Hour 4 — Refine and Finish
 
