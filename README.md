@@ -539,8 +539,8 @@ Expected outcomes:
 
 | Days   | Planned Goal   | What Actually Happened | What Changed   | Next Steps     |
 | ------ | -------------- | ---------------------- | -------------- | -------------- |
-| Day 1 | `[Write here]` | `[Write here]`         | `[Write here]` | `[Write here]` |
-| Day 2 | `[Write here]` | `[Write here]`         | `[Write here]` | `[Write here]` |
+| Day 1 | `[Hardware Integration and Simulation]` | `[hardware Integration and Simulation and Website Frontend completed]`         | `[-]` | `[Backend and API Generation]` |
+| Day 2 | `[Backend and API generation]` | `[Write here]`         | `[Write here]` | `[Write here]` |
 | Day 3 | `[Write here]` | `[Write here]`         | `[Write here]` | `[Write here]` |
 | Day 4 | `[Write here]` | `[Write here]`         | `[Write here]` | `[Write here]` |
 
