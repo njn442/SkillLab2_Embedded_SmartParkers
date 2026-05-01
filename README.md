@@ -1,4 +1,4 @@
-<img width="1102" height="316" alt="image" src="https://github.com/user-attachments/assets/f6c8baaa-395f-4149-8029-018a123e5931" /># SKILL LAB PRATICAL HACKATHON
+# SKILL LAB PRATICAL HACKATHON
 
 ## Final Project README
 
