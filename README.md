@@ -649,21 +649,33 @@ Suggested images:
 Describe the final version of your project.
 
 **Response:**  
-
+`Our Smart Parking System is a web-based and sensor-integrated solution that helps users check parking availability and book slots in real-time.
+The system includes a Flask-based web application where users can sign up, log in, and book parking slots based on vehicle type (bike, car, SUV). The dashboard dynamically shows available slots, pricing, booking history, and confirmation details.On the hardware side, the system is designed to integrate IR sensors connected to a Raspberry Pi. These sensors detect vehicle presence in each slot and update the system in real-time.
+Currently, the system uses simulated slot data, but it is fully designed to support real sensor-based input. This makes the system scalable and ready for real-world deployment.`
 
 ## 17.2 What Works Well
-
+`- User authentication (signup/login) works smoothly with proper validation.
+- Slot booking system correctly decreases available slots.
+- Real-time dashboard updates after booking.
+- Pricing calculation based on vehicle type and time works correctly.
+- UI is clean, centered, and easy to use.
+- System flow is logical and user-friendly.`
 
 
 ## 17.3 What Still Needs Improvement
-
+`- Hardware integration (IR sensor → website) is currently simulated.
+- Real-time automatic updates using sensors need to be implemented.
+- Multi-user concurrency handling can be improved.
+- UI can be enhanced further with animations and responsiveness.
+- Mobile-friendly version can be added.`
 
 ## 17.4 What Changed From the Original Plan
 
 How did the project change from the initial idea?
 
 **Response:**  
-
+`Initially, the plan was to directly integrate hardware (IR sensors) with the system.
+However, due to time constraints and complexity, we first built a complete working software model using Flask and SQLite. The slot availability is currently simulated.Later, we designed the system in such a way that hardware integration can be easily added using Raspberry Pi GPIO.This approach helped us first complete the core functionality and then prepare for real-world implementation.`
 
 ---
 
@@ -676,7 +688,9 @@ What slowed you down?
 How well did you manage time, tasks, and responsibilities?
 
 **Response:**  
-
+`Our team worked well by dividing responsibilities between software and hardware.
+Neel Jain and Bharati Bhatia focused on developing the web application using Flask, including login, booking system, and UI design.
+Hitesh Gughe and Sanika Shahasane worked on hardware planning, sensor understanding, and circuit design.We managed time effectively by completing the software first and then planning hardware integration. Some challenges included debugging errors and understanding Flask routing, but we solved them through teamwork.`
 
 ## 18.2 Technical Reflection
 
@@ -689,7 +703,13 @@ What did you learn about:
 - integration?
 
 **Response:**  
-
+`We learned multiple technical skills during this project:
+- Electronics: Understanding IR sensors and Raspberry Pi GPIO.
+- Coding: Building a full-stack web app using Flask, HTML, and CSS.
+- Integration: Connecting software logic with hardware concepts.
+- Database: Using SQLite for storing users and bookings.
+- Debugging: Solving real-world coding and logic errors.
+- This project improved both our software and hardware knowledge.`
 
 ## 18.3 Design Reflection
 
@@ -703,7 +723,12 @@ What did you learn about:
 - iteration?
 
 **Response:**  
-
+`We learned how to design a clean and user-friendly interface.
+We focused on:
+- Keeping UI simple and centered
+- Using clear colors (green for available, red for full)
+- Making navigation easy
+We also improved through iteration by fixing layout issues and improving visual clarity.This helped us understand how design impacts user experience.`
 
 ## 18.4 If You Had One More hour
 
@@ -711,7 +736,13 @@ What would you improve next?
 
 **Response:**  
 
-` `
+`If we had more time, we would:
+- Integrate real IR sensors with Raspberry Pi
+- Add live slot updates using GPIO input
+- Improve UI with animations and better responsiveness
+- Add mobile support
+- Implement real-time notifications
+This would make the system fully ready for real-world deployment.`
 
 ---
 
