@@ -263,13 +263,10 @@ Add a sketch with labels showing:
 
 | Component                 | Quantity | Purpose                               |
 | ------------------------- | --------:| ------------------------------------- |
-| `[Raspi/FPGA]`                 | `1`      | `[Main controller]`                   |
-| `[L298N Motor Driver]`    | `1`      | `[Control Motors]`                    |
-| `[BO Motors]`             | `2`      | `[Rotate wheels]`                     |
-| `[Buck Converter]`        | `1`      | `[Power ESP32]`                       |
-| `[Li Ion Battery Pack]`   | `2`      | `[Power]`                             |
-| `[Projector]`             | `1`      | `[Display obstacles]`                 |
-| `Camera (Webcam / Phone)` | `1`      | `[Tracks car position using markers]` |
+| `[Raspberry Pi]`          | `1`      | `[Main controller]`                   |
+| `[IR Sensors]`            | `2`      | `[Vehicle detection]`                 |
+| `[PyCam/Webcam]`          |  `1`      | `[To detect type of vehicle]`        |
+| `[LEDs]`                  | `1`      | `[To confirm a vehicle]`              |
 
 ## 7.2 Wiring Plan
 
@@ -295,9 +292,9 @@ Insert a hand-drawn or software-made circuit diagram.
 
 | Question         | Response                                                                                                                                          |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Power source     | `Battery (Li-ion pack)`                                                                                                                           |
-| Voltage required | `~6–8.4V for motors (via driver), stepped down to 5V for ESP32 (buck converter)`                                                                  |
-| Current concerns | `Motors can draw high current under load, which may cause voltage drops affecting ESP32 and WiFi stability`                                       |
+| Power source     | `Power Suppy switch`                                                                                                                           |
+| Voltage required | `~5V`                                                                  |
+| Current concerns | `Raspi draws 600mA-1.2A`                                       |
 | Safety concerns  | `Avoid over-discharging Li-ion batteries, ensure proper voltage regulation, prevent short circuits, and secure wiring to avoid loose connections` |
 
 ---
