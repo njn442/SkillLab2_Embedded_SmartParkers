@@ -1,1 +1,291 @@
-Insert your documented code here
+{% extends "base.html" %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+<div class="card">
+  <a href="{{ url_for('admin.manage') }}">Manage Users/Slots</a> |
+  <a href="{{ url_for('admin.export_bookings_csv') }}">Download CSV Report</a>
+</div>
+
+<div class="stats">
+  <div class="card"><strong>Total Slots:</strong> {{ stats.total_slots }}</div>
+  <div class="card"><strong>Occupied:</strong> {{ stats.occupied_slots }}</div>
+  <div class="card"><strong>Available:</strong> {{ stats.available_slots }}</div>
+  <div class="card"><strong>Occupancy:</strong> {{ stats.occupancy_percent }}%</div>
+  <div class="card"><strong>Active Bookings:</strong> {{ stats.active_bookings }}</div>
+  <div class="card"><strong>Completed:</strong> {{ stats.completed_bookings }}</div>
+  <div class="card"><strong>Revenue:</strong> Rs. {{ stats.total_revenue }}</div>
+</div>
+
+<h3>Recent Bookings</h3>
+<table class="table card">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>User ID</th>
+      <th>Slot</th>
+      <th>Vehicle</th>
+      <th>Status</th>
+      <th>Check-in Time</th>
+      <th>Checkout Time</th>
+      <th>Total</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for booking in recent_bookings %}
+      <tr>
+        <td>{{ booking.id }}</td>
+        <td>{{ booking.user_id }}</td>
+        <td>{{ booking.slot.slot_code }}</td>
+        <td>{{ booking.vehicle_number }} ({{ booking.vehicle_type|upper }})</td>
+        <td>{{ booking.status }}</td>
+        <td>{{ booking.checkin_time|format_ist }}</td>
+        <td>
+          {% if booking.checkout %}
+            {{ booking.checkout.checkout_time|format_ist }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
+        <td>Rs. {{ booking.total_cost }}</td>
+        <td>
+          {% if booking.status == "active" %}
+            <form method="post" action="{{ url_for('booking.end_booking', booking_id=booking.id) }}">
+              <button type="submit">End</button>
+            </form>
+          {% else %}
+            -
+          {% endif %}
+        </td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="9">No bookings found.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
+@dashboard_bp.route("/dashboard")
+@login_required
+def home():
+    all_slots = Slot.query.all()
+    stats = _build_slot_stats(all_slots)
+    return render_template("dashboard.html", stats=stats, slots=all_slots)
+
+from flask import Blueprint, current_app, jsonify, request
+
+from app.extensions import db
+from app.services.sensor_service import SimulatedSensorService
+
+api_bp = Blueprint("api", __name__, url_prefix="/api")
+
+
+def _parse_bool(value):
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in {"1", "true", "yes", "occupied", "on"}:
+            return True
+        if normalized in {"0", "false", "no", "free", "off"}:
+            return False
+    return None
+
+
+@api_bp.route("/sensor/update", methods=["POST"])
+def sensor_update():
+    expected_api_key = current_app.config.get("PI_API_KEY", "").strip()
+    provided_api_key = request.headers.get("X-API-KEY", "").strip()
+
+    if expected_api_key and provided_api_key != expected_api_key:
+        return jsonify({"ok": False, "message": "Unauthorized API key."}), 401
+
+    payload = request.get_json(silent=True) or {}
+    slot_code = str(payload.get("slot_code", "")).strip().upper()
+    is_occupied = _parse_bool(payload.get("is_occupied"))
+
+    if not slot_code:
+        return jsonify({"ok": False, "message": "slot_code is required."}), 400
+    if is_occupied is None:
+        return jsonify({"ok": False, "message": "is_occupied must be boolean-like."}), 400
+
+    sensor_service = SimulatedSensorService()
+    slot = sensor_service.update_slot_from_sensor(slot_code, is_occupied)
+    if not slot:
+        return jsonify({"ok": False, "message": f"Slot '{slot_code}' not found."}), 404
+
+    db.session.commit()
+    return jsonify(
+        {
+            "ok": True,
+            "message": "Slot updated successfully.",
+            "slot": {
+                "slot_code": slot.slot_code,
+                "is_occupied": slot.is_occupied,
+                "slot_type": slot.slot_type,
+            },
+        }
+    )
+
+Invoke-RestMethod -Uri "http://127.0.0.1:5000/api/sensor/update" `
+  -Method Post `
+  -Headers @{ "X-API-KEY" = "smart-parking-pi-key" } `
+  -ContentType "application/json" `
+  -Body '{"slot_code":"B1","is_occupied":true}'
+
+import RPi.GPIO as GPIO
+import time
+from RPLCD.i2c import CharLCD
+
+# ---------------- SETUP ----------------
+GPIO.setmode(GPIO.BCM)
+
+IR = 17
+TOUCH = 27
+LED_GREEN = 22
+LED_RED = 23
+BUZZER = 24
+
+GPIO.setup(IR, GPIO.IN)
+GPIO.setup(TOUCH, GPIO.IN)
+GPIO.setup(LED_GREEN, GPIO.OUT)
+GPIO.setup(LED_RED, GPIO.OUT)
+GPIO.setup(BUZZER, GPIO.OUT)
+
+lcd = CharLCD('PCF8574', 0x27)
+
+# ---------------- FUNCTIONS ----------------
+def lcd_msg(msg):
+    lcd.clear()
+    lcd.write_string(msg)
+
+def green():
+    GPIO.output(LED_GREEN, True)
+    GPIO.output(LED_RED, False)
+
+def red():
+    GPIO.output(LED_GREEN, False)
+    GPIO.output(LED_RED, True)
+
+def buzzer_on():
+    GPIO.output(BUZZER, True)
+
+def buzzer_off():
+    GPIO.output(BUZZER, False)
+
+# ---------------- MAIN ----------------
+try:
+    while True:
+
+        # Idle state
+        if not GPIO.input(IR):
+            lcd_msg("Slot Available")
+            green()
+            buzzer_off()
+
+        # Vehicle detected
+        else:
+            lcd_msg("Vehicle Detected")
+            green()
+            start = time.time()
+
+            while GPIO.input(IR):
+                duration = time.time() - start
+
+                # Assist mode
+                if GPIO.input(TOUCH):
+                    lcd_msg("Assist Mode")
+                    buzzer_on()
+                    time.sleep(1)
+                    buzzer_off()
+
+                # Wrong parking
+                elif duration > 5:
+                    lcd_msg("Adjust Vehicle")
+                    red()
+                    buzzer_on()
+
+            buzzer_off()
+            lcd_msg("Slot Occupied")
+            red()
+            time.sleep(2)
+
+        time.sleep(0.3)
+
+except KeyboardInterrupt:
+    print("Stopped")
+
+finally:
+    GPIO.cleanup()
+
+{% extends "base.html" %}
+{% block content %}
+<h2>Dashboard</h2>
+<div class="card">
+  <p class="muted">Welcome! Check real-time slot availability and book quickly.</p>
+  <a href="{{ url_for('booking.book_slot') }}"><button>Book a Slot</button></a>
+</div>
+
+<div class="stats">
+  <div class="card"><strong>Total Slots:</strong> {{ stats.total }}</div>
+  <div class="card"><strong>Available:</strong> {{ stats.available }}</div>
+  <div class="card"><strong>Bike:</strong> {{ stats.bike_available }}</div>
+  <div class="card"><strong>Car:</strong> {{ stats.car_available }}</div>
+  <div class="card"><strong>SUV:</strong> {{ stats.suv_available }}</div>
+</div>
+
+<div class="card">
+  <h3>Parking Layout</h3>
+  <p class="muted">Click an available slot button to continue booking that slot.</p>
+  <div class="parking-layout">
+    {% for slot in slots %}
+      <a
+        href="{{ url_for('booking.book_slot', slot_code=slot.slot_code) }}"
+        class="slot-btn {% if slot.is_occupied %}occupied{% else %}available{% endif %}"
+        {% if slot.is_occupied %}aria-disabled="true"{% endif %}
+      >
+        {{ slot.slot_code }}
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="card">
+  <h3>Live Parking Status (Flask)</h3>
+  <p id="parking-status-text" class="muted">Checking Raspberry Pi status...</p>
+</div>
+
+<div id="wrong-parking-popup" class="warning-popup hidden" role="alert">
+  <strong>Wrong parking detected!</strong> Vehicle overlaps the parking line.
+</div>
+
+<h3>All Slots</h3>
+<table class="table card">
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Type</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for slot in slots %}
+    <tr>
+      <td>{{ slot.slot_code }}</td>
+      <td>{{ slot.slot_type|upper }}</td>
+      <td>
+        {% if slot.is_occupied %}
+          <span class="badge badge-danger">Occupied</span>
+        {% else %}
+          <span class="badge badge-success">Available</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
