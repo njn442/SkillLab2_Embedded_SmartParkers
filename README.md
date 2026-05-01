@@ -222,7 +222,9 @@ Users interact with the system through a web interface. They can log in, check a
 Add an early sketch of the full idea.
 
 **Insert image below:**  
-`[Upload image and link here]`
+`[
+]`
+
 
 Example:
 
@@ -244,7 +246,8 @@ Add a sketch with labels showing:
 
 **Insert image below:**  
 `[Upload image and link here]`
-<img width="1600" height="1200" alt="image" src="https://github.com/user-attachments/assets/95637f31-b4e7-4427-a9e1-4b63fbeb0ac5" />
+>
+<img width="1080" height="1534" alt="WhatsApp Image 2026-05-01 at 7 48 17 PM" src="https://github.com/user-attachments/assets/fee6628e-0725-4f7d-9d2f-de17703ec155" />
 
 ## 6.3 Approximate Dimensions
 
@@ -267,25 +270,32 @@ Add a sketch with labels showing:
 | `[IR Sensors]`            | `2`      | `[Vehicle detection]`                 |
 | `[PyCam/Webcam]`          |  `1`      | `[To detect type of vehicle]`        |
 | `[LEDs]`                  | `1`      | `[To confirm a vehicle]`              |
-
+| `[I2C LCD]`               |` 1` |`[Displays booking status]`  |
+|` [Touch Sensors]` |` 1` | ` [To control the barricade]` |
+|`[Buzzer]`|`1`|`[for illegal entry]`|
+|`[LEDs]`|`[2]`|`[Slot booking]`|
 ## 7.2 Wiring Plan
 
 Describe the main electrical connections.
 
 **sample Response:**  
-`The RASPI is connected to the motor driver (L298N) using four GPIO pins (18,19; 22,23) to control motor direction (IN1, IN2, IN3, IN4). Two PWM-capable pins (ENA and ENB; 25 and 26) are connected to control the speed of each motor.
+`The RASPI is connected to the I2C LCD using four GPIO pins (2,6,3,5) to I2C pins (5V, GND, SDA, SCL) respectively.
+ 
+ The two IR sensors using three GPIO pins (1,6,11) and (1,6,12) to 3.3V, GND and output respectively.
+ 
+ The Touch Sensor to GPIO pins (1,6,13).
 
-The motors are connected to the output terminals of the motor driver. The motor driver is powered directly by the battery pack (higher voltage), while the ESP32 receives regulated 5V from the buck converter.
-
-All components share a common ground to ensure stable operation. The projector and camera are connected to the laptop, which handles tracking and game logic separately.`
+The two LEDs are connected to GPIO 15 and 16 and a buzzer is connected to GPIO 18.
+`
 
 ## 7.3 Circuit Diagram/architecture diagram
 
 Insert a hand-drawn or software-made circuit diagram.
 
 **Insert image below:**  
-`[Upload image and link here]`
+`[(https://drive.google.com/file/d/1LkzW4oW6XcjPHx7QGRLeFAiQvFghBp-7/view?usp=sharing)]`
 <img width="867" height="1156" alt="" src="" />
+<img width="1600" height="1167" alt="WhatsApp Image 2026-05-01 at 8 25 30 PM" src="https://github.com/user-attachments/assets/f176d6dd-c193-42cf-9aa1-1a3d5627adf6" />
 
 
 # 7.4. Power Plan
@@ -295,7 +305,7 @@ Insert a hand-drawn or software-made circuit diagram.
 | Power source     | `Power Suppy switch`                                                                                                                           |
 | Voltage required | `~5V`                                                                  |
 | Current concerns | `Raspi draws 600mA-1.2A`                                       |
-| Safety concerns  | `Avoid over-discharging Li-ion batteries, ensure proper voltage regulation, prevent short circuits, and secure wiring to avoid loose connections` |
+| Safety concerns  | `If you smell "hot electronics," unplug the USB power immediately. Usually, that’s a sign of a short circuit or a component drawing too much current.` |
 
 ---
 
@@ -305,10 +315,10 @@ Insert a hand-drawn or software-made circuit diagram.
 
 | Tool / Platform                | Purpose                                        |
 | ------------------------------ | ---------------------------------------------- |
-| `[MicroPython]`                | `Control ESP32`                                |
-| `[Python/PyGame/OpenCV]`       | `Track markers, game logic, create projection` |
-| `[Fusion/Blender/Illustrator]` | `[Prototyping structure]`                      |
-|                                |                                                |
+| `[Raspberry Pi Terminal]`      | `Control RaspberryPi`                          |
+| `[Python/OpenCV]`              | `Vehicle Type Detection` |
+| `[Flask]` | `[Backend/API]`                      |
+
 
 ## 8.2 Software Logic/Algorithm
 
@@ -326,21 +336,35 @@ Include:
 
 **Response:**  
 `
+**Startup Behavior**
 
-- **Sample Startup behavior:**  
-  The Raspi/FPGA initializes motor pins, PWM control, and starts a WiFi access point with a web server. The laptop initializes camera input, tracking system, and projection mapping.
-- **Input handling:**  
-  Movement commands are received from the laptop (pygame sends http requests)
-- **Sensor reading:**  
-  The camera continuously captures frames, and OpenCV detects ArUco markers to determine the car’s position and orientation.
-- **Decision logic:**  
-  The system maps the car’s position into a virtual coordinate system and checks for nearby obstacles or collisions. If movement is valid, the command is allowed; if not, it is blocked or replaced with a feedback action (like a slight shake).
-- **Output behavior:**  
-  The ESP32 drives the motors using PWM signals to control speed and direction. The projector displays the updated game environment, including obstacles, targets, and feedback visuals.
-- **Communication logic:**  
-  The laptop sends HTTP requests (e.g., `/forward`, `/left`) to the ESP32 over WiFi. The ESP32 parses these commands and executes motor actions.
-- **Reset behavior:**  
-  If no command is received within a short timeout, the ESP32 stops the motors. The game resets when a level is completed or restarted.`
+The system initializes in two distinct environments:Hardware (Raspberry Pi): The GPIO pins are configured using the BCM mode. Pins are assigned to specific roles: IR and Touch sensors as inputs, and LEDs (Green/Red) and a Buzzer as outputs. The I2C LCD is initialized to display status messages.  Web Server (Flask): The application sets up API blueprints and dashboard routes. It requires an API key (PI_API_KEY) to be configured for secure communication with the hardware.  
+
+**Input Handling**
+
+The system processes three primary forms of input:Physical Sensors: It monitors an IR sensor (pin 17) for vehicle presence and a Touch sensor (pin 27) for manual assistance requests.  User Interaction: Users interact via a web dashboard to book slots, while admins manage users and export data.  API Payloads: The backend accepts JSON payloads containing slot_code and is_occupied boolean values. 
+
+**Sensor Reading**
+
+The hardware logic continuously polls the digital inputs in a loop:Presence Detection: GPIO.input(IR) returns True if a vehicle is detected in the slot.  Touch Input: GPIO.input(TOUCH) is checked while a vehicle is present to trigger specific "Assist" logic.
+
+**Decision Logic**
+
+The Raspberry Pi script manages state transitions based on sensor timing and input:Idle Logic: If the IR sensor is not triggered, the system remains in a "Slot Available" state.  Detection Timer: Once a vehicle is detected, a timer starts. If the vehicle stays for more than 5 seconds without clearing the sensor, the system decides it is "Wrong Parking" (misaligned).  Assist Logic: If the touch sensor is activated during detection, it overrides other messages to display "Assist Mode".  Occupancy Confirmation: Once the IR sensor is no longer triggered after a detection event, the system concludes the slot is now "Occupied".
+
+**Output Behavior**
+
+The system provides real-time feedback through multiple channels:Visual (Hardware): A Green LED indicates availability or active detection, while a Red LED indicates a "Wrong Parking" error or a finalized "Occupied" status.  Audio: A buzzer sounds during "Assist Mode" or to alert the driver to adjust their vehicle.  LCD Display: Shows text updates such as "Slot Available," "Adjust Vehicle," or "Slot Occupied".  Web UI: The dashboard updates a "Live Parking Status" and can trigger a "Wrong parking detected!" popup for users. 
+
+**Communication Logic**
+
+Communication between the hardware and the server is handled via a REST API:The system uses POST requests to /api/sensor/update.  Security: Requests must include an X-API-KEY in the header to be authorized.  Data Parsing: The server normalizes various input types (e.g., "1", "true", "occupied") into standard boolean values to update the database. 
+
+**Reset Behavior**
+
+The system handles resets and shutdowns through two mechanisms:Cleanup: Upon a KeyboardInterrupt (manual stop), the hardware script executes GPIO.cleanup(), which resets all pins to a safe state to prevent hardware damage or lingering signals.  Looping: The main logic is wrapped in a while True loop, ensuring that after a vehicle occupies a slot or an error is cleared, the system returns to its monitoring state. 
+
+`
 
 ## 8.3 Code Flowchart
 
@@ -371,25 +395,45 @@ Suggested sequence:
 | Item                             | Quantity | In Kit? | Need to Buy? | Estimated Cost | Material / Spec               | Why This Choice?          |
 | -------------------------------- | --------:| ------- | ------------ | --------------:| ----------------------------- | ------------------------- |
 | `[RASPI]`                        | `1`      | `Yes`   | `No`         | `0`            | `38 Pin ESP32`                | `[To control components]` |
-| `[Motor Driver]`                 | `[1]`    | `[Yes]` | `[No]`       | `0`            | `[LN296]`                     | `[To drive both motors]`  |
-| `[DC Motors and wheel]`          | `[2]`    | `[No]`  | `[Yes]`      | `[150]`        | `[BO Motors and 6 cm wheels]` | `[high torque motors]`    |
-| `[Buck Converter]`               | `[1]`    | `[No]`  | `[Yes]`      | `[75]`         |                               |                           |
-| `[Li-ion batteries with holder]` | `[1]`    | `[No]`  | `[Yes]`      | `[200]`        |                               |                           |
+| `[I2C LCD]`                 | `[1]`    | `[Yes]` | `[No]`       | `0`            |                    | `[Displays booking status]`  |
+| `[IR Sensors]`          | `[2]`    | `[Yes]`  | `[No]`      | `[0]`        | | `[Vehicle detection]`    |
+| `[Touch Sensor]`               | `[1]`    | `[yes]`  | `[No]`      | `[0]`         |                               |     `[Automates barricade operation instead of operating manually`                      |
+| `[Buzzer]` | `[1]`    | `[Yes]`  | `[No]`      | `[0]`        |                              |     ` [Intrusion detedtion]`                      |
 
 ## 9.2 Material Justification
 
 Explain why you selected your main materials and components.
 
 **Response:**  
-`DC motors (BO motors) were chosen instead of servos or steppers because the system requires continuous rotation for movement rather than precise angular control (Previously, we were considering using steppers as we were planning on tracking movement on the ESP using its relative position from an origin, but since we're using a camera now, this is not required). A motor driver (L298N) was used to allow bidirectional control and speed variation using PWM.`
+`**Main Controller**: 
+
+ Raspberry PiThe Raspberry Pi serves as the central hub because it possesses the GPIO (General Purpose Input/Output) capabilities necessary to interface with       physical sensors while simultaneously running high-level Python logic. It handles the "Main" loop that manages timing for "Wrong Parking" logic and facilitates    the communication logic required to send HTTP POST requests to the Flask web server. 
+
+**Vehicle Detection**: 
+
+ IR SensorsIR (Infrared) Sensors were selected for primary vehicle detection because they provide a simple digital signal (True or False) to indicate presence. In  the code, the IR sensor (Pin 17) acts as the trigger for the entire detection sequence, allowing the system to distinguish between an empty slot and a "Vehicle    Detected" state. 
+
+**User Feedback**: I2C LCD & LEDs
+ 
+ I2C LCD: This component is critical for providing clear, human-readable instructions to the driver, such as "Slot Available," "Adjust Vehicle," or "Slot           Occupied". Using the I2C protocol allows the display to be controlled using only two data pins, saving GPIO space for other sensors.  
+ LEDs: The Green and Red LEDs provide instant visual confirmation of the slot's status. Green signals that the slot is ready or a vehicle is being detected, while  Red signals an error (Wrong Parking) or that the booking is finalized and the slot is occupied. 
+
+**Interaction & Security**: Touch Sensor & Buzzer
+ 
+ Touch Sensor: This component acts as a manual override or "Assist Mode" trigger. When a user interacts with it, the system enters a specific logic branch that     activates the buzzer and updates the LCD, providing a physical interface for the driver to request help. 
+ Buzzer: The buzzer is used as an audible alert system. It is strategically triggered when the system detects "Wrong Parking" (vehicle misaligned for more than 5   seconds) or when "Assist Mode" is activated, ensuring the driver is alerted even if they are not looking at the LCD or LEDs. 
+
+**Backend Integration**:
+ 
+ Web APIWhile not a physical "material," the Flask API and Dashboard components (referenced in user dashboard html code.txt and api generator code.txt) are         justified by the need for remote monitoring. This allows the "Live Parking Status" to be viewed on a web browser, translating the physical sensor data into        actionable information for both users and administrators.  `
 
 
 ## 9.3 Items You chose
 
 | Item                 | Why Needed               | Purchase Link | Latest Safe Date to Procure | Status       |
 | -------------------- | ------------------------ | ------------- | --------------------------- | ------------ |
-| `BO Motors + Wheels` | `Drive system for car`   | `robu.in`     | `15th April`                | `[Received]` |
-| `Buck Converter`     | `Stable power for ESP32` | `local store` | `before testing`            | `[Received]` |
+| `I2C LCD`            | `Display`                |               |                             | `[Received]` |
+| `IR Sensors`         | `Sensor devices`         |               |         | `[Received]` |
 | `Li-ion Batteries`   | `Portable power`         | `local store` | `before testing`            | `Recieved`   |
 
 ## 9.4 Budget Summary
