@@ -63,10 +63,10 @@ By the final review, this README should clearly show:
 
 | Name                  | Primary Role                    | Secondary Role   | Strengths Brought to the Project |
 | --------------        | ------------------------------- | --------------   | -------------------------------- |
-| `Neev Jain `          | `Software(Flask/App)`           | `UI Design`      |  `Coding ,Logic Building `       |
-| `Hitesh Gughe`        | `Hardware (sensors)`            | `Circuit Setup`  | `Electronics , Wiring`           |
-| `Bharati Bhatia`      | `Software(Backend/UI)`          | `Testing`        | ` Problem Solving , UI`          |
-| `Sanika Shahasane`    | `Hardware (Integration)`        | `Documentation`  | `Hardware Integration`           |
+| `Neev Jain `          | `Software(Flask/App)`           | `Hardware`      |  `Coding ,Logic Building `       |
+| `Hitesh Ghuge`        | `Hardware (sensors)`            | `PCB making`  | `Electronics , Wiring`           |
+| `Bharati Bhatia`      | `Documentation`          | `Testing`        | ` Problem Solving , UI`          |
+| `Sanika Shahasane`    | `Software`        | `Documentation`  | `Hardware Integration`           |
 
 ## 1.3 Project Title
 
@@ -222,7 +222,10 @@ Users interact with the system through a web interface. They can log in, check a
 Add an early sketch of the full idea.
 
 **Insert image below:**  
-`[
+`[<img width="783" height="1139" alt="WhatsApp Image 2026-05-02 at 11 02 59 AM (1)" src="https://github.com/user-attachments/assets/f3719a6a-fe5a-4188-bd94-023ce8196c23" />
+<img width="587" height="1147" alt="WhatsApp Image 2026-05-02 at 11 02 59 AM" src="https://github.com/user-attachments/assets/eb478485-e70a-447e-8979-f7eeb310aef0" />
+
+
 ]`
 
 
@@ -267,8 +270,7 @@ Add a sketch with labels showing:
 | Component                 | Quantity | Purpose                               |
 | ------------------------- | --------:| ------------------------------------- |
 | `[Raspberry Pi]`          | `1`      | `[Main controller]`                   |
-| `[IR Sensors]`            | `2`      | `[Vehicle detection]`                 |
-| `[PyCam/Webcam]`          |  `1`      | `[To detect type of vehicle]`        |
+| `[IR Sensors]`            | `3`      | `[Vehicle detection/Intrusion detection]`                 |
 | `[LEDs]`                  | `1`      | `[To confirm a vehicle]`              |
 | `[I2C LCD]`               |` 1` |`[Displays booking status]`  |
 |` [Touch Sensors]` |` 1` | ` [To control the barricade]` |
@@ -397,9 +399,9 @@ Suggested sequence:
 | -------------------------------- | --------:| ------- | ------------ | --------------:| ----------------------------- | ------------------------- |
 | `[RASPI]`                        | `1`      | `Yes`   | `No`         | `0`            | `38 Pin ESP32`                | `[To control components]` |
 | `[I2C LCD]`                 | `[1]`    | `[Yes]` | `[No]`       | `0`            |                    | `[Displays booking status]`  |
-| `[IR Sensors]`          | `[2]`    | `[Yes]`  | `[No]`      | `[0]`        | | `[Vehicle detection]`    |
+| `[IR Sensors]`          | `[2]`    | `[Yes]`  | `[No]`      | `[0]`        | | `[Vehicle detection/Intrusion detection]`    |
 | `[Touch Sensor]`               | `[1]`    | `[yes]`  | `[No]`      | `[0]`         |                               |     `[Automates barricade operation instead of operating manually`                      |
-| `[Buzzer]` | `[1]`    | `[Yes]`  | `[No]`      | `[0]`        |                              |     ` [Intrusion detedtion]`                      |
+| `[Buzzer]` | `[1]`    | `[Yes]`  | `[No]`      | `[0]`        |                              |     ` [Intrusion detection]`                      |
 
 ## 9.2 Material Justification
 
@@ -570,20 +572,20 @@ What is the single biggest uncertainty in your project at this stage?
 
 | What Needs Testing     | How You Will Test It                                                                 | Success Condition                                                                                    |
 | ---------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `[Wifi connection]`    | `[Check if motor spins via app button]`                                              | `[Both motors accurately respond to wifi signals]`                                                   |
+| `[Wifi connection]`    | `[verify if the hardwre is running]`                                              | `[LCD displays output, IR sensors and buzzers work.]`                                                   |
                        |
 ## 14.2 Testing and Debugging Log
 
 | Date          | Problem Found                         | Type         | What You Tried                                | Result               | Next Action                                    |
 | ------------- | ------------------------------------- | ------------ | --------------------------------------------- | -------------------- | ---------------------------------------------- |
-| `18th April`  | `Car not balancing properly`          | `Mechanical` | `Add low-friction caster support to one side` | `Worked`             | `improve caster structure`                     |
+| `30th April`  | `IR array was not working`          | `Electrical` | `Used two IR sensors` | `Worked`             | `implemenation`                     |
 
 
 ## 14.3 Playtesting Notes
 
 | Tester      | What They Did                        | What Confused Them                    | What They Enjoyed                         | What You Will Change                          |
 | ----------- | ------------------------------------ | ------------------------------------- | ----------------------------------------- | --------------------------------------------- |
-| `Gopal` | `Tried navigating through obstacles` | `Some obstacles ewren't clear enough` | `Liked projection + real car interaction` | `Add a slight red highlight around obstacles` |
+| `Hitesh` | `Tested the IR sensor detection` | `The sensor sometimes triggered when he just walked past it.` | `Liked how the LCD updated the status instantly` | `Shield the IR sensor or adjust the potentiometer sensitivity to prevent false triggers.` |
 
 
 ---
